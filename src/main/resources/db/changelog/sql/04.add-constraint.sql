@@ -1,0 +1,1 @@
+ALTER TABLE public."user" ADD CONSTRAINT user_un_login UNIQUE ("login");
