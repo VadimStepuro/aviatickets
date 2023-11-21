@@ -6,20 +6,22 @@ import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
 import com.stepuro.aviatickets.models.Aircompany;
 import com.stepuro.aviatickets.repositories.AircompanyRepository;
 import jakarta.transaction.Transactional;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.config.ConfigDataResourceNotFoundException;
+import org.springframework.cache.annotation.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.TreeMap;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @Transactional
-@Slf4j
 public class AircompanyService {
     @Autowired
     private AircompanyRepository aircompanyRepository;
@@ -58,6 +60,7 @@ public class AircompanyService {
                 .INSTANCE
                 .aircompanyToAircompanyDto(aircompanyRepository.save(aircompany2));
     }
+
 
     public void delete(UUID id){
         aircompanyRepository.deleteById(id);

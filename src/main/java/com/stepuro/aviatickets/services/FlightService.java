@@ -28,6 +28,7 @@ public class FlightService {
     private FlightRepository flightRepository;
 
 
+    @Cacheable(cacheNames = "flights")
     public List<FlightDto> findAll(){
         return flightRepository
                 .findAll()
@@ -36,6 +37,7 @@ public class FlightService {
                 .collect(Collectors.toList());
     }
 
+    @Cacheable(cacheNames = "flight", key = "#id")
     public FlightDto findById(UUID id) {
         Flight flight = flightRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Flight with id " + id + " not found"));
         return FlightMapper.INSTANCE.flightToFlightDto(flight);
@@ -57,11 +59,27 @@ public class FlightService {
         return flightRepository.countTotalFlightsByArrivalAirport();
     }
 
+    @Caching(
+            put = {
+                    @CachePut(cacheNames = "flight", key = "#flightDto.id")
+            },
+            evict = {
+                    @CacheEvict(cacheNames = "flights", allEntries = true)
+    }
+    )
     public FlightDto create(FlightDto flightDto){
         Flight flight = FlightMapper.INSTANCE.flightDtoToFlight(flightDto);
         return FlightMapper.INSTANCE.flightToFlightDto(flightRepository.save(flight));
     }
 
+    @Caching(
+            put = {
+                    @CachePut(cacheNames = "flight", key = "#flightDto.id")
+            },
+            evict = {
+                    @CacheEvict(cacheNames = "flights", allEntries = true)
+            }
+    )
     public FlightDto edit(FlightDto flightDto) {
         Flight findedFlight = flightRepository
                 .findById(flightDto.getId())
@@ -76,6 +94,12 @@ public class FlightService {
         return FlightMapper.INSTANCE.flightToFlightDto(flightRepository.save(findedFlight));
     }
 
+    @Caching(
+            evict = {
+                    @CacheEvict(cacheNames = "flights", allEntries = true),
+                    @CacheEvict(cacheNames = "flight", key = "#id")
+            }
+    )
     public void delete(UUID id){
         flightRepository.deleteById(id);
     }

@@ -1,5 +1,5 @@
 CREATE TABLE public.aircompany (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	"name" varchar NOT NULL,
 	country varchar NULL,
 	CONSTRAINT aircompany_pkey PRIMARY KEY (id)
@@ -13,7 +13,7 @@ CREATE TABLE public.aircompany (
 -- DROP TABLE public.airplane_model;
 
 CREATE TABLE public.airplane_model (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	"name" varchar NOT NULL,
 	weight int4 NOT NULL CONSTRAINT airplane_model_check_weight CHECK (weight > 0),
 	economy_seats int4 NOT NULL CONSTRAINT airplane_model_check_economy_seats CHECK (economy_seats > 0),
@@ -29,7 +29,7 @@ CREATE TABLE public.airplane_model (
 -- DROP TABLE public.airport;
 
 CREATE TABLE public.airport (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	city varchar NOT NULL,
 	"name" varchar NOT NULL,
 	capacity int4 NULL CONSTRAINT airport_check_capacity CHECK (capacity >= 0),
@@ -46,7 +46,7 @@ CREATE TABLE public.airport (
 -- DROP TABLE public.privilege;
 
 CREATE TABLE public.privilege (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	"name" varchar NOT NULL,
 	CONSTRAINT privilege_pkey PRIMARY KEY (id)
 );
@@ -59,7 +59,7 @@ CREATE TABLE public.privilege (
 -- DROP TABLE public."role";
 
 CREATE TABLE public."role" (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	"name" varchar NOT NULL,
 	CONSTRAINT role_pkey PRIMARY KEY (id)
 );
@@ -72,7 +72,7 @@ CREATE TABLE public."role" (
 -- DROP TABLE public."user";
 
 CREATE TABLE public."user" (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	"name" varchar NOT NULL,
 	login varchar NOT NULL,
 	email varchar NULL,
@@ -89,7 +89,7 @@ CREATE TABLE public."user" (
 -- DROP TABLE public.airplane;
 
 CREATE TABLE public.airplane (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	airplane_model_id uuid NULL,
 	aircompany_id uuid NOT NULL,
 	CONSTRAINT airplane_pkey PRIMARY KEY (id),
@@ -105,7 +105,7 @@ CREATE TABLE public.airplane (
 -- DROP TABLE public.flight;
 
 CREATE TABLE public.flight (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	airplane_id uuid NOT NULL,
 	arrival_airport_id uuid NOT NULL,
 	departure_airport_id uuid NOT NULL,
@@ -141,7 +141,7 @@ CREATE TABLE public.roles_privileges (
 -- DROP TABLE public.ticket;
 
 CREATE TABLE public.ticket (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	flight_id uuid NOT NULL,
 	flight_class varchar NULL,
 	flight_cost numeric NOT NULL CONSTRAINT ticket_check_flight_cost CHECK (flight_cost > 0),
@@ -163,75 +163,3 @@ CREATE TABLE public.users_roles (
 	CONSTRAINT role_fk FOREIGN KEY (role_id) REFERENCES public."role"(id),
 	CONSTRAINT user_fk FOREIGN KEY (user_id) REFERENCES public."user"(id)
 );
-
-
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v1()
- RETURNS uuid
- LANGUAGE c
- PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_generate_v1$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v1mc()
- RETURNS uuid
- LANGUAGE c
- PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_generate_v1mc$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v3(namespace uuid, name text)
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_generate_v3$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v4()
- RETURNS uuid
- LANGUAGE c
- PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_generate_v4$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_generate_v5(namespace uuid, name text)
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_generate_v5$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_nil()
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_nil$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_dns()
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_ns_dns$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_oid()
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_ns_oid$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_url()
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_ns_url$function$
-;
-
-CREATE OR REPLACE FUNCTION public.uuid_ns_x500()
- RETURNS uuid
- LANGUAGE c
- IMMUTABLE PARALLEL SAFE STRICT
-AS '$libdir/uuid-ossp', $function$uuid_ns_x500$function$
-;
