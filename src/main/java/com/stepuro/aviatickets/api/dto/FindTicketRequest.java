@@ -1,6 +1,5 @@
 package com.stepuro.aviatickets.api.dto;
 
-import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 import lombok.Data;

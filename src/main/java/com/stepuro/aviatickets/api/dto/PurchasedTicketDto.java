@@ -1,8 +1,5 @@
 package com.stepuro.aviatickets.api.dto;
 
-import com.stepuro.aviatickets.models.Ticket;
-import com.stepuro.aviatickets.models.User;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import lombok.AllArgsConstructor;

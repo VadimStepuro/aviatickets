@@ -1,5 +1,5 @@
 CREATE TABLE public.purchased_ticket (
-	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	id uuid NOT NULL DEFAULT gen_random_uuid (),
 	user_id uuid NOT NULL,
 	ticket_id uuid NOT NULL,
 	"date" date NOT NULL,

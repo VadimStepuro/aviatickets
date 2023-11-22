@@ -57,5 +57,15 @@ databaseChangeLog:
             dbms: 'postgresql'
             endDelimiter: \nGO
             splitStatements: true
+            path: db/changelog/sql/06.mock-data.sql
+            stripComments: true
+  - changeSet:
+      id: 07-migration
+      author: Stepuro Vadim
+      changes:
+        - sqlFile:
+            dbms: 'postgresql'
+            endDelimiter: \nGO
+            splitStatements: true
             path: db/changelog/sql/07.drop-flight-status.sql
             stripComments: true

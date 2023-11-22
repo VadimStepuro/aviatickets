@@ -1,10 +1,8 @@
 package com.stepuro.aviatickets.services;
 
-import com.stepuro.aviatickets.api.dto.AirplaneMapper;
 import com.stepuro.aviatickets.api.dto.AirplaneModelDto;
 import com.stepuro.aviatickets.api.dto.AirplaneModelMapper;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.Airplane;
 import com.stepuro.aviatickets.models.AirplaneModel;
 import com.stepuro.aviatickets.repositories.AirplaneModelRepository;
 import jakarta.transaction.Transactional;

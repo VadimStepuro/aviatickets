@@ -1,14 +1,10 @@
 package com.stepuro.aviatickets.config;
 
 import com.stepuro.aviatickets.repositories.UserRepository;
+import com.stepuro.aviatickets.security.models.UserPrincipalMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.security.access.expression.method.DefaultMethodSecurityExpressionHandler;
-import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchy;
-import org.springframework.security.access.hierarchicalroles.RoleHierarchyImpl;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -17,7 +13,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
 
 @Configuration
 @RequiredArgsConstructor
@@ -25,8 +20,10 @@ public class AppConfig {
     private final UserRepository repository;
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> repository.findByLogin(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        return username -> UserPrincipalMapper
+                .INSTANCE
+                .userToUserPrincipal(repository.findByLogin(username)
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found")));
     }
 
     @Bean
