@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Component
-public class SetupSecurityData implements
-        ApplicationListener<ContextRefreshedEvent> {
+public class SetupSecurityData implements ApplicationListener<ContextRefreshedEvent> {
 
     boolean alreadySetup = false;
 
