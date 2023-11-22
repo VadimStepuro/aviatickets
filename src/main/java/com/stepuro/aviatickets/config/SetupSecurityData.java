@@ -1,6 +1,5 @@
 package com.stepuro.aviatickets.config;
 
-import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
 import com.stepuro.aviatickets.models.Privilege;
 import com.stepuro.aviatickets.models.Role;
 import com.stepuro.aviatickets.models.User;
@@ -16,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 @Component
 public class SetupSecurityData implements

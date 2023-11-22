@@ -1,6 +1,5 @@
 package com.stepuro.aviatickets.services;
 
-import com.stepuro.aviatickets.api.annotations.Loggable;
 import com.stepuro.aviatickets.api.dto.*;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
 import com.stepuro.aviatickets.models.Airport;
@@ -8,7 +7,6 @@ import com.stepuro.aviatickets.models.CityCount;
 import com.stepuro.aviatickets.models.Flight;
 import com.stepuro.aviatickets.repositories.FlightRepository;
 import jakarta.transaction.Transactional;
-import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
@@ -17,7 +15,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

@@ -1,11 +1,7 @@
 package com.stepuro.aviatickets.security.controllers;
 
-import com.stepuro.aviatickets.api.annotations.Loggable;
 import com.stepuro.aviatickets.api.dto.UserDto;
-import com.stepuro.aviatickets.api.dto.UserMapper;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.User;
-import com.stepuro.aviatickets.security.models.JwtRefreshRequest;
 import com.stepuro.aviatickets.security.models.JwtRequest;
 import com.stepuro.aviatickets.security.models.JwtResponse;
 import com.stepuro.aviatickets.security.services.AuthService;
@@ -18,15 +14,12 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/auth")

@@ -1,14 +1,13 @@
 package com.stepuro.aviatickets.api.dto;
 
-import com.stepuro.aviatickets.models.Flight;
 import com.stepuro.aviatickets.models.FlightClass;
-import com.stepuro.aviatickets.models.User;
-import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @AllArgsConstructor
