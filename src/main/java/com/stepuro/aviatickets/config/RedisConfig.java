@@ -1,7 +1,6 @@
 package com.stepuro.aviatickets.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration;
 import org.springframework.cache.CacheManager;
@@ -22,12 +21,6 @@ public class RedisConfig {
 
     @Autowired
     private CacheManager cacheManager;
-
-    @Value("${spring.cache.host}")
-    private String redisHost;
-
-    @Value("${spring.cache.port}")
-    private int redisPort;
 
     @Bean
     public RedisTemplate<String, Serializable> redisCacheTemplate(LettuceConnectionFactory redisConnectionFactory) {
