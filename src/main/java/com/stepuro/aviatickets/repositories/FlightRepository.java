@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,4 +19,7 @@ public interface FlightRepository extends JpaRepository<Flight, UUID> {
     @Query("select new com.stepuro.aviatickets.models.CityCount(f.arrivalAirport.city, count(f.arrivalAirport.city)) " +
             "from Flight AS f GROUP BY f.arrivalAirport.city ORDER BY count(f.arrivalAirport.city) DESC LIMIT 20")
     List<CityCount> countTotalFlightsByArrivalAirport();
+
+    List<Flight> findAllByArrivalDateBetweenAndDepartureDateBetween(
+            Date arrivalDateStart, Date arrivalDateEnd, Date departureDateStart, Date departureDateEnd);
 }

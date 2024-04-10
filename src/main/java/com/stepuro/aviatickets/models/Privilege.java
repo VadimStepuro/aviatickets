@@ -6,6 +6,8 @@ import org.springframework.security.core.GrantedAuthority;
 
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "privilege", schema = "public")
 @AllArgsConstructor
@@ -19,22 +21,6 @@ public class Privilege implements GrantedAuthority {
     private UUID id;
     @Column(name = "name")
     private String name;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     @Override
     public String getAuthority() {

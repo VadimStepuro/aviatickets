@@ -108,6 +108,28 @@ public class FlightController {
 
     @Operation(summary = "Get FlightDtos by Departure and Arrival Airport")
     @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All found FlightDtos by Departure and Arrival Airport without transfer",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = FlightDto.class)))}),
+            @ApiResponse(responseCode = "204", description = "No FlightDto found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @GetMapping("/flights/concrete")
+    @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
+    public ResponseEntity<List<FlightDto>> getFlightsByDepartureAndArrivalAirportWithoutTransfer(@RequestBody FlightRequest request){
+        List<FlightDto> flightDtos = flightService.findAllByDepartureAirportAndArrivalAirportWithoutTransfer(request.getDepartureAirport(), request.getArrivalAirport());
+
+        if(flightDtos.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(flightDtos, HttpStatus.OK);
+
+    }
+
+    @Operation(summary = "Get FlightDtos by Departure and Arrival Airport")
+    @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "All found FlightDtos by Departure and Arrival Airport",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(
@@ -119,7 +141,7 @@ public class FlightController {
     @GetMapping("/flights/concrete")
     @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
     public ResponseEntity<List<FlightDto>> getFlightsByDepartureAndArrivalAirport(@RequestBody FlightRequest request){
-        List<FlightDto> flightDtos = flightService.findAllByDepartureAirportAndArrivalAirport(request.getDepartureAirport(), request.getArrivalAirport());
+        List<FlightDto> flightDtos = flightService.findAllFlightsByDepartureAndArrivalAirport(request);
 
         if(flightDtos.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);

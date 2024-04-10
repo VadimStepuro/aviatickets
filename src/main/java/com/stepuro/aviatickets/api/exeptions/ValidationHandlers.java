@@ -52,4 +52,10 @@ public class ValidationHandlers {
     public ApiError handleExpiredJwt(ExpiredJwtException ex) {
         return new ApiError(HttpStatus.UNAUTHORIZED, ex.getMessage(), ex);
     }
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(NotEnoughInfoException.class)
+    public ApiError handleNotEnoughInfoException(NotEnoughInfoException ex){
+        return new ApiError(HttpStatus.BAD_REQUEST, ex.getMessage(), ex);
+    }
+
 }

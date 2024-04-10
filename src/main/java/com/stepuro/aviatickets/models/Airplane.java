@@ -5,6 +5,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+@Setter
+@Getter
 @Entity
 @Table(name = "airplane", schema = "public")
 @AllArgsConstructor
@@ -25,27 +27,4 @@ public class Airplane {
     @JoinColumn(name = "airplane_model_id", referencedColumnName = "id")
     private AirplaneModel model;
 
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public Aircompany getAircompany() {
-        return aircompany;
-    }
-
-    public void setAircompany(Aircompany aircompany) {
-        this.aircompany = aircompany;
-    }
-
-    public AirplaneModel getModel() {
-        return model;
-    }
-
-    public void setModel(AirplaneModel model) {
-        this.model = model;
-    }
 }

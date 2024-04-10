@@ -1,6 +1,8 @@
 package com.stepuro.aviatickets.services;
 
-import com.stepuro.aviatickets.api.dto.*;
+import com.stepuro.aviatickets.api.dto.AirportDto;
+import com.stepuro.aviatickets.api.dto.FlightDto;
+import com.stepuro.aviatickets.api.dto.FlightRequest;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
 import com.stepuro.aviatickets.api.mapper.AirplaneMapper;
 import com.stepuro.aviatickets.api.mapper.AirportMapper;
@@ -10,15 +12,18 @@ import com.stepuro.aviatickets.models.CityCount;
 import com.stepuro.aviatickets.models.Flight;
 import com.stepuro.aviatickets.repositories.FlightRepository;
 import jakarta.transaction.Transactional;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.shortestpath.DijkstraShortestPath;
+import org.jgrapht.graph.DefaultDirectedGraph;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -43,7 +48,7 @@ public class FlightService {
         return FlightMapper.INSTANCE.flightToFlightDto(flight);
     }
 
-    public List<FlightDto> findAllByDepartureAirportAndArrivalAirport(AirportDto departureAirportDto, AirportDto arrivalAirportDto){
+    public List<FlightDto> findAllByDepartureAirportAndArrivalAirportWithoutTransfer(AirportDto departureAirportDto, AirportDto arrivalAirportDto){
         Airport departureAirport = AirportMapper.INSTANCE.airportDtoToAirport(departureAirportDto);
         Airport arrivalAirport = AirportMapper.INSTANCE.airportDtoToAirport(arrivalAirportDto);
 
@@ -53,6 +58,25 @@ public class FlightService {
                 .map(FlightMapper.INSTANCE::flightToFlightDto)
                 .collect(Collectors.toList());
 
+    }
+
+    public List<FlightDto> findAllFlightsByDepartureAndArrivalAirport(@RequestBody FlightRequest request){
+        List<Flight> flights = flightRepository.findAllByArrivalDateBetweenAndDepartureDateBetween(
+                request.getDepartureDate(),
+                request.getArrivalDate(),
+                request.getDepartureDate(),
+                request.getArrivalDate()
+        );
+
+        Graph<Airport, Flight> graph = createGraph(flights);
+
+        DijkstraShortestPath<Airport, Flight> dijkstraShortestPath = new DijkstraShortestPath<>(graph);
+
+        List<Flight> result = new ArrayList<>();
+
+
+
+        return null;
     }
 
     public List<CityCount> findTop10Cities(){
@@ -104,5 +128,30 @@ public class FlightService {
         flightRepository.deleteById(id);
     }
 
+    private Graph<Airport, Flight> createGraph(List<Flight> flights){
+        DefaultDirectedGraph<Airport, Flight> graph = new DefaultDirectedGraph<>(Flight.class);
+
+        Set<Airport> setOfAirport = createSetOfAirport(flights);
+
+        for(Airport airport: setOfAirport){
+            graph.addVertex(airport);
+        }
+
+        for(Flight flight: flights){
+        }
+
+        return graph;
+    }
+
+    private Set<Airport> createSetOfAirport(List<Flight> flights){
+        Set<Airport> airportSet = new HashSet<>();
+
+        for(Flight flight : flights){
+            airportSet.add(flight.getArrivalAirport());
+            airportSet.add(flight.getDepartureAirport());
+        }
+
+        return airportSet;
+    }
 }
 

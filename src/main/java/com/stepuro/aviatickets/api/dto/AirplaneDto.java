@@ -4,6 +4,8 @@ import lombok.*;
 
 import java.util.UUID;
 
+@Setter
+@Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
@@ -15,29 +17,5 @@ public class AirplaneDto {
     private AircompanyDto aircompany;
 
     private AirplaneModelDto model;
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
-    public AircompanyDto getAircompany() {
-        return aircompany;
-    }
-
-    public void setAircompany(AircompanyDto aircompany) {
-        this.aircompany = aircompany;
-    }
-
-    public AirplaneModelDto getModel() {
-        return model;
-    }
-
-    public void setModel(AirplaneModelDto model) {
-        this.model = model;
-    }
 
 }

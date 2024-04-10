@@ -17,6 +17,7 @@
 		<java.version>17</java.version>
 		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
 		<springdoc.starter.version>2.3.0</springdoc.starter.version>
+		<jgraght.version>1.5.2</jgraght.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -122,6 +123,13 @@
 			<version>RELEASE</version>
 			<scope>compile</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>org.jgrapht</groupId>
+			<artifactId>jgrapht-core</artifactId>
+			<version>${jgraght.version}</version>
+		</dependency>
+
 	</dependencies>
 
 
