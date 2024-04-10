@@ -1,0 +1,121 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aviatickets-app-env
+  namespace: aviatickets
+data:
+  database-url: 'aviatickets-pgpool-service'
+  spring-datasource-url: 'jdbc:postgresql://aviatickets-pgpool-service/postgres'
+  jdbc-driver: 'org.postgresql.Driver'
+  redis-host: 'redis-service.redis'
+  redis-port: "6379"
+  redis-database: "0"
+  redis-timeout: "60000"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aviatickets-app
+  namespace: aviatickets
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: aviatickets-app
+  template:
+    metadata:
+      labels:
+        app: aviatickets-app
+    spec:
+      containers:
+        - name: aviatickets-app
+          image: vadimstepuro/aviatickets:0.0.2
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_DATASOURCE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: spring-datasource-url
+
+            - name: SPRING_DATASOURCE_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-username
+
+            - name: SPRING_DATASOURCE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-password
+
+            - name: JDBC_DRIVER
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: jdbc-driver
+
+            - name: JDBC_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: spring-datasource-url
+
+            - name: JDBC_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-username
+
+            - name: JDBC_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-password
+
+            - name: SPRING_DATA_REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: redis-host
+
+            - name: SPRING_DATA_REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: redis-port
+
+            - name: SPRING_DATA_REDIS_DATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: redis-database
+
+            - name: SPRING_DATA_REDIS_TIMEOUT
+              valueFrom:
+                configMapKeyRef:
+                  name: aviatickets-app-env
+                  key: redis-timeout
+
+            - name: SPRING_DATA_REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-app-secret
+                  key: redis-password
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aviatickets-app-service
+  namespace: aviatickets
+spec:
+  type: NodePort
+  selector:
+    app: aviatickets-app
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: 8080
+      nodePort: 30001

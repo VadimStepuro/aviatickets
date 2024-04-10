@@ -17,6 +17,7 @@ services:
     volumes:
       - db-data:/var/lib/postgresql/data
     restart: unless-stopped
+
   cache:
     image: "redis"
     ports:

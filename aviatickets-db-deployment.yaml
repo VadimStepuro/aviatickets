@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: aviatickets-db
+  namespace: aviatickets
+spec:
+  serviceName: aviatickets-db-service
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aviatickets-db
+  template:
+    metadata:
+      labels:
+        app: aviatickets-db
+    spec:
+      containers:
+        - name: aviatickets-db
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: "postgres"
+            - name: POSTGRES_USER
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-username
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: aviatickets-db-secret
+                  key: aviatickets-db-root-password
+          livenessProbe:
+            exec:
+              command:
+                - bash
+                - -ec
+                - 'PGPASSWORD=$POSTGRES_PASSWORD psql -w -U "postgres" -d "postgres"  -h 127.0.0.1 -c "SELECT 1"'
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 6
+          readinessProbe:
+              exec:
+                command:
+                  - bash
+                  - -ec
+                  - 'PGPASSWORD=$POSTGRES_PASSWORD psql -w -U "postgres" -d "postgres"  -h 127.0.0.1 -c "SELECT 1"'
+              initialDelaySeconds: 5
+              periodSeconds: 10
+              timeoutSeconds: 5
+              successThreshold: 1
+              failureThreshold: 6
+          volumeMounts:
+          - mountPath: /var/lib/postgresql/data
+            name: db-volume
+      volumes:
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: aviatickets-pv-claim
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aviatickets-db-service
+  namespace: aviatickets
+spec:
+  selector:
+    app: aviatickets-db
+  ports:
+    - protocol: TCP
+      port: 5432
+      targetPort: 5432
+---

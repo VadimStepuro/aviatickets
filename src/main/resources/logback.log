@@ -1974,3 +1974,4 @@ org.springframework.dao.EmptyResultDataAccessException: No class com.stepuro.avi
 #logback.classic pattern: %d [%thread] %-5level %logger{36} - %msg%n
 #logback.classic pattern: %d [%thread] %-5level %logger{36} - %msg%n
 #logback.classic pattern: %d [%thread] %-5level %logger{36} - %msg%n
+#logback.classic pattern: %d [%thread] %-5level %logger{36} - %msg%n

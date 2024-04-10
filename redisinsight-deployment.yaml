@@ -1,0 +1,83 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redis
+  labels:
+    name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: redisinsight-service
+  namespace: redis
+spec:
+  type: NodePort
+  ports:
+    - port: 80
+      nodePort: 30029
+      targetPort: 5540
+  selector:
+    app: redisinsight
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redisinsight-pv-claim
+  namespace: redis
+  labels:
+    app: redisinsight
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 2Gi
+  storageClassName: redisinsight-volume
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: redisinsight-pv-volume
+  labels:
+    type: local
+    app: redisinsight
+spec:
+  storageClassName: redisinsight-volume
+  capacity:
+    storage: 2Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data/redisinsight"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redisinsight #deployment name
+  namespace: redis
+  labels:
+    app: redisinsight #deployment label
+spec:
+  replicas: 1 #a single replica pod
+  selector:
+    matchLabels:
+      app: redisinsight #which pods is the deployment managing, as defined by the pod template
+  template: #pod template
+    metadata:
+      labels:
+        app: redisinsight #label for pod/s
+    spec:
+      containers:
+
+        - name:  redisinsight #Container name (DNS_LABEL, unique)
+          image: redis/redisinsight:latest #repo/image
+          imagePullPolicy: IfNotPresent #Installs the latest RedisInsight version
+          volumeMounts:
+            - name: redisinsight #Pod volumes to mount into the container's filesystem. Cannot be updated.
+              mountPath: /data
+          ports:
+            - containerPort: 5540 #exposed container port and protocol
+              protocol: TCP
+      volumes:
+        - name: redisinsight
+          emptyDir: {} # node-ephemeral volume https://kubernetes.io/docs/concepts/storage/volumes/#emptydir
