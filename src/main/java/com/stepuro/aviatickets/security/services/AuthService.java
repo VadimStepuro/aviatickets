@@ -1,7 +1,7 @@
 package com.stepuro.aviatickets.security.services;
 
 import com.stepuro.aviatickets.api.dto.UserDto;
-import com.stepuro.aviatickets.api.dto.UserMapper;
+import com.stepuro.aviatickets.api.mapper.UserMapper;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
 import com.stepuro.aviatickets.models.User;
 import com.stepuro.aviatickets.security.models.JwtRequest;

@@ -2,9 +2,9 @@ package com.stepuro.aviatickets.services;
 
 import com.stepuro.aviatickets.api.dto.*;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.Role;
+import com.stepuro.aviatickets.api.mapper.FlightMapper;
+import com.stepuro.aviatickets.api.mapper.TicketMapper;
 import com.stepuro.aviatickets.models.Ticket;
-import com.stepuro.aviatickets.models.User;
 import com.stepuro.aviatickets.repositories.TicketRepository;
 import com.stepuro.aviatickets.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -16,7 +16,6 @@ import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

@@ -1,76 +1,117 @@
 package com.stepuro.aviatickets.controllers;
 
 import com.stepuro.aviatickets.api.annotations.Loggable;
-import com.stepuro.aviatickets.api.dto.FlightDto;
-import com.stepuro.aviatickets.api.dto.FlightMapper;
 import com.stepuro.aviatickets.api.dto.PrivilegeDto;
-import com.stepuro.aviatickets.api.dto.PrivilegeMapper;
-import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.Flight;
-import com.stepuro.aviatickets.models.Privilege;
+import com.stepuro.aviatickets.api.dto.error.ApiError;
 import com.stepuro.aviatickets.services.PrivilegeService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
 public class PrivilegeController {
-        @Autowired
-        private PrivilegeService privilegeService;
+    @Autowired
+    private PrivilegeService privilegeService;
 
-        @Loggable
-        @GetMapping("/privileges")
-        @PreAuthorize("hasAuthority('READ_PRIVILEGE_PRIVILEGE')")
-        public ResponseEntity<List<PrivilegeDto>> getAllPrivileges(){
-            List<PrivilegeDto> privileges = privilegeService.findAll();
+    @Operation(summary = "Get all PrivilegeDtos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All found PrivilegeDtos",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = PrivilegeDto.class)))}),
+            @ApiResponse(responseCode = "204", description = "No PrivilegeDto found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @GetMapping("/privileges")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE_PRIVILEGE')")
+    public ResponseEntity<List<PrivilegeDto>> getAllPrivileges(){
+        List<PrivilegeDto> privileges = privilegeService.findAll();
 
-            if(privileges.isEmpty())
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        if(privileges.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
 
-            return new ResponseEntity<>(privileges, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(privileges, HttpStatus.OK);
+    }
 
-        @Loggable
-        @GetMapping("/privileges/{id}")
-        @PreAuthorize("hasAuthority('READ_PRIVILEGE_PRIVILEGE')")
-        public ResponseEntity<PrivilegeDto> getPrivilegeById(@PathVariable("id") UUID id)  {
-            PrivilegeDto privilege = privilegeService.findById(id);
+    @Operation(summary = "Get PrivilegeDto by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found PrivilegeDto by id",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PrivilegeDto.class))}),
+            @ApiResponse(responseCode = "404", description = "PrivilegeDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @GetMapping("/privileges/{id}")
+    @PreAuthorize("hasAuthority('READ_PRIVILEGE_PRIVILEGE')")
+    public ResponseEntity<PrivilegeDto> getPrivilegeById(@PathVariable("id") UUID id)  {
+        PrivilegeDto privilege = privilegeService.findById(id);
 
-            return new ResponseEntity<>(privilege, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(privilege, HttpStatus.OK);
+    }
 
-        @Loggable
-        @PostMapping("/privileges")
-        @PreAuthorize("hasAuthority('WRITE_FLIGHT_PRIVILEGE')")
-        public ResponseEntity<PrivilegeDto> createPrivilege(@RequestBody @Valid PrivilegeDto privilegeDto){
-            privilegeDto = privilegeService.create(privilegeDto);
-            return new ResponseEntity<>(privilegeDto, HttpStatus.CREATED);
-        }
+    @Operation(summary = "Create PrivilegeDto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Created PrivilegeDto",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PrivilegeDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid PrivilegeDto",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PostMapping("/privileges")
+    @PreAuthorize("hasAuthority('WRITE_FLIGHT_PRIVILEGE')")
+    public ResponseEntity<PrivilegeDto> createPrivilege(@RequestBody @Valid PrivilegeDto privilegeDto){
+        privilegeDto = privilegeService.create(privilegeDto);
+        return new ResponseEntity<>(privilegeDto, HttpStatus.CREATED);
+    }
 
-        @Loggable
-        @PutMapping("/privileges")
-        @PreAuthorize("hasAuthority('WRITE_FLIGHT_PRIVILEGE')")
-        public ResponseEntity<PrivilegeDto> updatePrivilege(@RequestBody @Valid PrivilegeDto privilegeDto){
-            privilegeDto = privilegeService.edit(privilegeDto);
+    @Operation(summary = "Edit PrivilegeDto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Edited PrivilegeDto",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = PrivilegeDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid PrivilegeDto",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
+            @ApiResponse(responseCode = "404", description = "PrivilegeDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PutMapping("/privileges")
+    @PreAuthorize("hasAuthority('WRITE_FLIGHT_PRIVILEGE')")
+    public ResponseEntity<PrivilegeDto> updatePrivilege(@RequestBody @Valid PrivilegeDto privilegeDto){
+        privilegeDto = privilegeService.edit(privilegeDto);
 
-            return new ResponseEntity<>(privilegeDto, HttpStatus.OK);
-        }
+        return new ResponseEntity<>(privilegeDto, HttpStatus.OK);
+    }
 
-        @Loggable
-        @DeleteMapping("/privileges/{id}")
-        @PreAuthorize("hasAuthority('DELETE_FLIGHT_PRIVILEGE')")
-        public void deletePrivilege(@PathVariable("id") UUID id){
-            privilegeService.delete(id);
-        }
+    @Operation(summary = "Delete PrivilegeDto by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Deletes PrivilegeDto by id",
+                    content = { @Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "PrivilegeDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @DeleteMapping("/privileges/{id}")
+    @PreAuthorize("hasAuthority('DELETE_FLIGHT_PRIVILEGE')")
+    public void deletePrivilege(@PathVariable("id") UUID id){
+        privilegeService.delete(id);
+    }
 }

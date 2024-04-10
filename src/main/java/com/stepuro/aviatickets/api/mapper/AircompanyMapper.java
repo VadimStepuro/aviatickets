@@ -1,8 +1,8 @@
-package com.stepuro.aviatickets.api.dto;
+package com.stepuro.aviatickets.api.mapper;
 
+import com.stepuro.aviatickets.api.dto.AircompanyDto;
 import com.stepuro.aviatickets.models.Aircompany;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper

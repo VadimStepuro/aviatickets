@@ -1,15 +1,17 @@
 package com.stepuro.aviatickets.controllers;
 
 import com.stepuro.aviatickets.api.annotations.Loggable;
-import com.stepuro.aviatickets.api.dto.AircompanyDto;
 import com.stepuro.aviatickets.api.dto.AirplaneDto;
-import com.stepuro.aviatickets.api.dto.AirplaneMapper;
-import com.stepuro.aviatickets.api.dto.AirplaneModelDto;
-import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.Airplane;
+import com.stepuro.aviatickets.api.dto.error.ApiError;
 import com.stepuro.aviatickets.services.AircompanyService;
 import com.stepuro.aviatickets.services.AirplaneModelService;
 import com.stepuro.aviatickets.services.AirplaneService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,9 +20,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1")
@@ -34,6 +34,15 @@ public class AirplaneController {
     @Autowired
     private AircompanyService aircompanyService;
 
+    @Operation(summary = "Get all AirplaneDtos")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "All found AirplaneDtos",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = AirplaneDto.class)))}),
+            @ApiResponse(responseCode = "204", description = "No AirplaneDto found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
     @GetMapping("/airplanes")
     @PreAuthorize("hasAuthority('READ_AIRPLANE_PRIVILEGE') || !isAuthenticated()")
@@ -46,6 +55,14 @@ public class AirplaneController {
         return new ResponseEntity<>(airplanes, HttpStatus.OK);
     }
 
+    @Operation(summary = "Get AirplaneDto by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Found AirplaneDto by id",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AirplaneDto.class))}),
+            @ApiResponse(responseCode = "404", description = "AirplaneDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
     @GetMapping("/airplanes/{id}")
     @PreAuthorize("hasAuthority('READ_AIRPLANE_PRIVILEGE') || !isAuthenticated()")
@@ -55,6 +72,14 @@ public class AirplaneController {
         return new ResponseEntity<>(airplane, HttpStatus.OK);
     }
 
+    @Operation(summary = "Create AirplaneDto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Created AirplaneDto",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AirplaneDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid AirplaneDto",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
     @PostMapping("/airplanes")
     @PreAuthorize("hasAuthority('WRITE_AIRPLANE_PRIVILEGE')")
@@ -63,6 +88,17 @@ public class AirplaneController {
         return new ResponseEntity<>(airplaneDto, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Edit AirplaneDto")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Edited AirplaneDto",
+                    content = { @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = AirplaneDto.class))}),
+            @ApiResponse(responseCode = "400", description = "Invalid AirplaneDto",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}),
+            @ApiResponse(responseCode = "404", description = "AirplaneDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
     @PutMapping("/airplanes")
     @PreAuthorize("hasAuthority('WRITE_AIRPLANE_PRIVILEGE')")
@@ -72,6 +108,13 @@ public class AirplaneController {
         return new ResponseEntity<>(airplaneDto, HttpStatus.OK);
     }
 
+    @Operation(summary = "Delete AirplaneDto by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Deletes AirplaneDto by id",
+                    content = {@Content(mediaType = "application/json")}),
+            @ApiResponse(responseCode = "404", description = "AirplaneDto not found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
     @DeleteMapping("/airplanes/{id}")
     @PreAuthorize("hasAuthority('DELETE_AIRPLANE_PRIVILEGE')")

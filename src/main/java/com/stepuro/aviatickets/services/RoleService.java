@@ -1,10 +1,9 @@
 package com.stepuro.aviatickets.services;
 
-import com.stepuro.aviatickets.api.dto.PrivilegeMapper;
+import com.stepuro.aviatickets.api.mapper.PrivilegeMapper;
 import com.stepuro.aviatickets.api.dto.RoleDto;
-import com.stepuro.aviatickets.api.dto.RoleMapper;
+import com.stepuro.aviatickets.api.mapper.RoleMapper;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
-import com.stepuro.aviatickets.models.Privilege;
 import com.stepuro.aviatickets.models.Role;
 import com.stepuro.aviatickets.repositories.RoleRepository;
 import jakarta.transaction.Transactional;
@@ -12,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 

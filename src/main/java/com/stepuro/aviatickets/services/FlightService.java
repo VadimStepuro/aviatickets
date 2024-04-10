@@ -2,6 +2,9 @@ package com.stepuro.aviatickets.services;
 
 import com.stepuro.aviatickets.api.dto.*;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
+import com.stepuro.aviatickets.api.mapper.AirplaneMapper;
+import com.stepuro.aviatickets.api.mapper.AirportMapper;
+import com.stepuro.aviatickets.api.mapper.FlightMapper;
 import com.stepuro.aviatickets.models.Airport;
 import com.stepuro.aviatickets.models.CityCount;
 import com.stepuro.aviatickets.models.Flight;

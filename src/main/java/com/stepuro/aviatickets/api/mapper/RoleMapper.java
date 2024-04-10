@@ -1,5 +1,6 @@
-package com.stepuro.aviatickets.api.dto;
+package com.stepuro.aviatickets.api.mapper;
 
+import com.stepuro.aviatickets.api.dto.RoleDto;
 import com.stepuro.aviatickets.models.Role;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;

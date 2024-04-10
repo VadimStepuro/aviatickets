@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
         - name: aviatickets-app
-          image: vadimstepuro/aviatickets:0.0.2
+          image: vadimstepuro/aviatickets:0.0.5
           ports:
             - containerPort: 8080
           env:
@@ -104,6 +104,43 @@ spec:
                 secretKeyRef:
                   name: aviatickets-app-secret
                   key: redis-password
+
+            - name: STEPURO_APP_SECRETKEY_ACCESS
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-secretKey-access
+                  name: aviatickets-app-secret
+
+            - name: STEPURO-APP-SECRETKEY-REFRESH
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-secretKey-refresh
+                  name: aviatickets-app-secret
+
+            - name: STEPURO-APP-ACCESSTOKENCOOCKIENAME
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-accessTokenCookieName
+                  name: aviatickets-app-secret
+
+            - name: STEPURO-APP-REFRESHTOKENCOOCKIENAME
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-refreshTokenCookieName
+                  name: aviatickets-app-secret
+
+            - name: STEPURO-APP-JWTEXPIRATIONMS
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-jwtExpirationMs
+                  name: aviatickets-app-secret
+
+            - name: STEPURO-APP-JWTREFRESHEXPIRATIONMS
+              valueFrom:
+                secretKeyRef:
+                  key: stepuro-app-jwtRefreshExpirationMs
+                  name: aviatickets-app-secret
+
 ---
 apiVersion: v1
 kind: Service
