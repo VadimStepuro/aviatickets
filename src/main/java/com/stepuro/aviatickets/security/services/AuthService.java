@@ -1,5 +1,6 @@
 package com.stepuro.aviatickets.security.services;
 
+import com.stepuro.aviatickets.api.annotations.Loggable;
 import com.stepuro.aviatickets.api.dto.UserDto;
 import com.stepuro.aviatickets.api.mapper.UserMapper;
 import com.stepuro.aviatickets.api.exeptions.ResourceNotFoundException;
@@ -7,8 +8,8 @@ import com.stepuro.aviatickets.models.User;
 import com.stepuro.aviatickets.security.models.JwtRequest;
 import com.stepuro.aviatickets.security.models.JwtResponse;
 import com.stepuro.aviatickets.security.utils.JwtProvider;
-import com.stepuro.aviatickets.services.RoleService;
-import com.stepuro.aviatickets.services.UserService;
+import com.stepuro.aviatickets.services.implementation.RoleServiceImpl;
+import com.stepuro.aviatickets.services.implementation.UserServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.security.auth.message.AuthException;
 import lombok.NonNull;
@@ -26,11 +27,11 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final Map<String, String> refreshStorage = new HashMap<>();
     private final JwtProvider jwtProvider;
     private final AuthenticationManager authenticationManager;
-    private final RoleService roleService;
+    private final RoleServiceImpl roleService;
 
 
     public JwtResponse login(@NonNull JwtRequest authRequest) throws AuthException, ResourceNotFoundException{
@@ -80,6 +81,7 @@ public class AuthService {
         return SecurityContextHolder.getContext().getAuthentication();
     }
 
+    @Loggable
     public JwtResponse register(UserDto userDto) throws AuthException{
         JwtRequest request = new JwtRequest();
         request.setLogin(userDto.getLogin());

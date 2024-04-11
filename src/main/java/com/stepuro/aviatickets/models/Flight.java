@@ -14,6 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Builder
 @ToString
+@EqualsAndHashCode
 public class Flight {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

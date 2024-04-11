@@ -19,10 +19,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -116,7 +118,7 @@ public class FlightController {
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
-    @GetMapping("/flights/concrete")
+    @PutMapping("/flights/concrete/no_transfer")
     @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
     public ResponseEntity<List<FlightDto>> getFlightsByDepartureAndArrivalAirportWithoutTransfer(@RequestBody FlightRequest request){
         List<FlightDto> flightDtos = flightService.findAllByDepartureAirportAndArrivalAirportWithoutTransfer(request.getDepartureAirport(), request.getArrivalAirport());
@@ -128,26 +130,107 @@ public class FlightController {
 
     }
 
-    @Operation(summary = "Get FlightDtos by Departure and Arrival Airport")
+    @Operation(summary = "Get shortest flights path by Departure and Arrival Airport")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "All found FlightDtos by Departure and Arrival Airport",
+            @ApiResponse(responseCode = "200", description = "Shortest path of FlightDtos by Departure and Arrival Airport",
                     content = { @Content(mediaType = "application/json",
                             array = @ArraySchema(
                                     schema = @Schema(implementation = FlightDto.class)))}),
-            @ApiResponse(responseCode = "204", description = "No FlightDto found",
+            @ApiResponse(responseCode = "204", description = "No Path found",
                     content = {@Content(mediaType = "application/json",
                             schema = @Schema(implementation = ApiError.class))}) })
     @Loggable
-    @GetMapping("/flights/concrete")
+    @PutMapping("/flights/concrete")
     @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
-    public ResponseEntity<List<FlightDto>> getFlightsByDepartureAndArrivalAirport(@RequestBody FlightRequest request){
-        List<FlightDto> flightDtos = flightService.findAllFlightsByDepartureAndArrivalAirport(request);
+    public ResponseEntity<List<FlightDto>> findShortestFlightsPathByDepartureAndArrivalAirport(@RequestBody @Valid FlightRequest request){
+        List<FlightDto> flightDtos = flightService.findShortestFlightsPathByDepartureAndArrivalAirport(request);
 
         if(flightDtos.isEmpty())
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
         return new ResponseEntity<>(flightDtos, HttpStatus.OK);
 
+    }
+
+    @Operation(summary = "Get shortest flights path by Departure and Arrival Airport")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Shortest path of FlightDtos by Departure and Arrival Airport",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = FlightDto.class)))}),
+            @ApiResponse(responseCode = "204", description = "No Path found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PutMapping("/flights/concrete/weighted")
+    @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
+    public ResponseEntity<List<FlightDto>> findShortestWeightedFlightsPathByDepartureAndArrivalAirport(@RequestBody @Valid FlightRequest request){
+        List<FlightDto> flightDtos = flightService.findShortestWeightedFlightsPathByDepartureAndArrivalAirport(request);
+
+        if(flightDtos.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(flightDtos, HttpStatus.OK);
+
+    }
+
+    @Operation(summary = "Get all possible paths with length less than path length")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "List of Flight paths with length less than path length",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = FlightDto.class)))}),
+            @ApiResponse(responseCode = "204", description = "No Path found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PutMapping("/flights/all_paths/length/{pathLength}")
+    @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
+    public ResponseEntity<List<List<FlightDto>>> findAllPathsWhereLengthLessThenPathLength(@RequestBody @Valid FlightRequest request, @PathVariable int pathLength){
+        List<List<FlightDto>> flightPaths = flightService.getFlightPathsWhereLengthLessThenPathLength(request, pathLength);
+
+        if(flightPaths.isEmpty())
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+
+        return new ResponseEntity<>(flightPaths, HttpStatus.OK);
+
+    }
+
+    @Operation(summary = "Get total flight graph")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Graph image in png",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = Byte.class)))}),
+            @ApiResponse(responseCode = "204", description = "No Path found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PostMapping(
+            value = "/flights/graph/total",
+            produces = MediaType.IMAGE_PNG_VALUE
+    )
+    @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
+    public ResponseEntity<byte[]> createTotalFlightGraphImage() throws IOException {
+        return new ResponseEntity<>(flightService.createTotalFlightGraphImage(), HttpStatus.CREATED);
+    }
+
+    @Operation(summary = "Get part flight graph")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Graph image in png",
+                    content = { @Content(mediaType = "application/json",
+                            array = @ArraySchema(
+                                    schema = @Schema(implementation = Byte.class)))}),
+            @ApiResponse(responseCode = "204", description = "No Path found",
+                    content = {@Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ApiError.class))}) })
+    @Loggable
+    @PutMapping(
+            value = "/flights/graph/part",
+            produces = MediaType.IMAGE_PNG_VALUE)
+    @PreAuthorize("hasAuthority('READ_FLIGHT_PRIVILEGE') || !isAuthenticated()")
+    public ResponseEntity<byte[]> createFlightImage(@RequestBody @Valid FlightRequest request) throws IOException {
+        return new ResponseEntity<>(flightService.createFlightGraphImage(request), HttpStatus.CREATED);
     }
 
     @Operation(summary = "Get top 10 FlightDtos by popularity")
